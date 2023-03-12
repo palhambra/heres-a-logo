@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const fs = require ('fs');
+const { Shape, Circle, Triangle, Square } = require('./lib/shapes.js')
 
 function init() {
   inquirer.prompt([
@@ -7,6 +8,7 @@ function init() {
       type: 'input',
       name: 'logoText',
       message: 'Enter up to 3 characters for your logo:',
+      // Will not let user continue in prompt if it is more than 3 characters
       validate: function(input) {
         if (input.length > 3) {
           return 'You can only enter up to 3 characters';
@@ -33,8 +35,22 @@ function init() {
   ])
   .then((data) => {
     console.log(data)
-    // fs.writeFile('logo.svg', newLogo(data), (err) =>
-    // err ? console.log(err) : console.log('Generated logo.svg'))
+
+    // switches depending on logoShape answer
+    let shape;
+    switch(data.logoShape) {
+      case 'Circle':
+        shape = new Circle(data.logoText, data.logoTextColor, data.logoShapeColor);
+        break;
+      case 'Triangle':
+        shape = new Triangle(data.logoText, data.logoTextColor, data.logoShapeColor);
+        break;
+      case 'Square':
+        shape = new Square(data.logoText, data.logoTextColor, data.logoShapeColor);
+    }
+
+    fs.writeFile('logo.svg', shape.newLogo(data), (err) =>
+    err ? console.log(err) : console.log('Generated logo.svg'))
   });
 }
 init();
